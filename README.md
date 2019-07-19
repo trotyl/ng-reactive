@@ -63,7 +63,7 @@ class HelloComponent extends Reactive {
     if (updateOn(changes.id, changes.password)) {
       if (this.id != null && this.password != null) {
         // Binding to a constant data
-        bind(this.username, of('Loading...')
+        bind(this.username, of('Loading...'))
 
         const user$ = this.doLogin(this.id, this.password)
         // Previous subscription will be unsubscribed automatically
@@ -81,6 +81,7 @@ class HelloComponent extends Reactive {
     }
 
     // Execute whenever the `username` reactive state changes
+    // Both inputs and reactive states are tracked
     if (updateOn(changes.username)) {
       // Schedule an operation after view updated
       viewUpdate(() => {
@@ -90,7 +91,6 @@ class HelloComponent extends Reactive {
     }
 
     // Execute whenever the `time` reactive state changes or in the first run
-    // Both inputs and reactive states are tracked
     if (updateOn(changes.time) || first) {
       this.heartbeatService.send()
     }
