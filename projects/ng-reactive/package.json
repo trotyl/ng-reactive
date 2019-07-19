@@ -1,0 +1,12 @@
+{
+  "name": "ng-reactive",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trotyl/ng-reactive.git"
+  },
+  "peerDependencies": {
+    "@angular/core": "^8.0.0",
+    "rxjs": "^6.0.0"
+  }
+}
