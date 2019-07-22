@@ -1,6 +1,6 @@
 import { AfterViewChecked, ChangeDetectorRef, Injectable, Injector, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, Type } from '@angular/core'
 import { Observable, Subscription } from 'rxjs'
-import { setProperty } from './util'
+import { deleteProperty, getProperty, setProperty } from './util'
 
 export interface State<T> {
   __ng_reactive_state: boolean
@@ -62,7 +62,7 @@ export function init(instance: object, injector: Injector): void {
 
   for (let i = 0; i < properties.length; i++) {
     const property = properties[i]
-    const content = (instance as any)[property]
+    const content = getProperty(instance, property)
     if (!isReactiveState(content)) { continue }
 
     const defaultValue = content.data
@@ -94,7 +94,7 @@ export function init(instance: object, injector: Injector): void {
       field = new WeakMap<object, unknown>()
     }
 
-    delete (instance as any)[property]
+    deleteProperty(instance, property)
     field.set(instance, defaultValue)
 
     if (content.source != null) {
@@ -122,7 +122,7 @@ export function init(instance: object, injector: Injector): void {
         field.set(this, value)
         cdRef.markForCheck()
       },
-      get() {
+      get(): unknown {
         activeInstance = this
         activeProperty = property
         return field.get(this)
@@ -139,7 +139,7 @@ export function init(instance: object, injector: Injector): void {
     const metaList = getStateMetaList(instance)
     const meta = metaList.get(property)!
     meta.subscription = source.subscribe(value => {
-      (instance as any)[property] = value
+      setProperty(instance, property, value)
     })
   }
 
@@ -179,7 +179,7 @@ export function bind<T>(target: T, source: Observable<T>): void {
     meta.subscription.unsubscribe()
   }
   meta.subscription = source.subscribe(value => {
-    (instance as any)[property] = value
+    setProperty(instance, property, value)
   })
 
   activeInstance = null
