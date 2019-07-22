@@ -5,7 +5,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { Subject } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { bind, deinit, init, state, updateOn, Reactive, StateChanges } from './ng-reactive'
+import { bind, deinit, init, reset, state, updateOn, Reactive, StateChanges } from './ng-reactive'
 
 describe('without base class', () => {
   @Component({
@@ -67,6 +67,16 @@ describe('without base class', () => {
 
     fixture.detectChanges()
     expect(fixture.nativeElement.textContent).toBe('0-11-12')
+  })
+
+  it('should reset state', () => {
+    component.foo = 10
+    fixture.detectChanges()
+
+    reset(component.foo)
+    fixture.detectChanges()
+
+    expect(component.foo).toBe(0)
   })
 })
 
@@ -135,6 +145,16 @@ describe('with base class', () => {
     component.baz = 10
     fixture.detectChanges()
     expect(component.flag).toBe(true)
+  })
+
+  it('should reset state', () => {
+    component.foo = 10
+    fixture.detectChanges()
+
+    reset(component.foo)
+    fixture.detectChanges()
+
+    expect(component.foo).toBe(0)
   })
 })
 

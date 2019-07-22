@@ -1,5 +1,6 @@
 import { AfterViewChecked, ChangeDetectorRef, Injectable, Injector, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, Type } from '@angular/core'
 import { Observable, Subscription } from 'rxjs'
+import { setProperty } from './util'
 
 export interface State<T> {
   __ng_reactive_state: boolean
@@ -207,6 +208,24 @@ export function unbind<T>(target: T): void {
   }
 }
 
+export function reset<T>(target: T): void {
+  if (isReactiveState(target)) {
+    return
+  }
+
+  if (activeInstance == null || activeProperty == null) {
+    throw new Error(`The property to reset is not properly initialized!`)
+  }
+
+  const instance = activeInstance
+  const property = activeProperty
+
+  const metaList = getStateMetaList(instance)
+  const meta = metaList.get(property)!
+
+  setProperty(instance, property, meta.defaultValue)
+}
+
 let viewActions: (() => void)[] | null = null
 
 export function updateOn(...changes: (StateChange<any> | null | undefined)[]): boolean {
@@ -215,7 +234,7 @@ export function updateOn(...changes: (StateChange<any> | null | undefined)[]): b
 
 export function viewUpdate(callback: () => void) {
   if (viewActions == null) {
-    throw new Error(`Cannot schedule view change outside "handleUpdate" method!`)
+    throw new Error(`Cannot schedule view change outside "update" method!`)
   }
 
   viewActions.push(callback)

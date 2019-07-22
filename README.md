@@ -13,7 +13,7 @@ npm install ng-reactive
 Eliminate async pipe and subscription process:
 
 ```typescript
-import { bind, state, unbind, updateOn, viewUpdate, Reactive, StateChanges } from 'ng-reactive'
+import { bind, reset, state, unbind, updateOn, viewUpdate, Reactive, StateChanges } from 'ng-reactive'
 import { interval, of, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { AccountService, User } from './account.service'
@@ -51,7 +51,7 @@ class HelloComponent extends Reactive {
     super(injector)
   }
 
-  // Implement update method based on changes and whether it's first run
+  // Implement `update()` method based on changes and whether it's first run
   update(changes: StateChanges<this>, first: boolean) {
     // Execute only in first run
     if (first) {
@@ -62,7 +62,7 @@ class HelloComponent extends Reactive {
     // Execute whenever the `id` or `password` input changes
     if (updateOn(changes.id, changes.password)) {
       if (this.id != null && this.password != null) {
-        // Binding to a constant data
+        // Binding to a constant value
         bind(this.username, of('Loading...'))
 
         const user$ = this.doLogin(this.id, this.password)
@@ -74,8 +74,10 @@ class HelloComponent extends Reactive {
         unbind(this.username)
         unbind(this.items)
 
+        // Reset a reactive state to its default value
+        reset(this.username)
         // Imperatively change a reactive state
-        this.username = 'Anonymous'
+        // Array is mutable and the default value may have been polluted
         this.items = []
       }
     }
